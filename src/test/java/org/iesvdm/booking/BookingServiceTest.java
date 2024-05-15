@@ -5,6 +5,8 @@ import static org.assertj.core.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 import java.time.LocalDate;
@@ -65,6 +67,17 @@ public class BookingServiceTest {
     @Test
     void getAvailablePlaceCountTest() {
 
+        when(roomService.getAvailableRooms()).thenReturn(new ArrayList<>() {
+            {
+                add(new Room("101", 3));
+                add(new Room("102", 2));
+                add(new Room("103", 5));
+            }
+        });
+
+        bookingService.getAvailablePlaceCount();
+        assertThat(bookingService.getAvailablePlaceCount()).isEqualTo(10);
+
     }
 
     /**
@@ -76,10 +89,16 @@ public class BookingServiceTest {
      @Test
     void calculatePriceTest() {
 
+            bookingService.calculatePrice(bookingRequest1);
+            verify(bookingRequest1, times(1)).getDateFrom();
+            verify(bookingRequest1, times(1)).getDateTo();
+            verify(bookingRequest1, times(1)).getGuestCount();
+            assertThat(bookingService.calculatePrice(bookingRequest1)).isEqualTo(12 * 100);
      }
 
 
     /**
+     *
      * Crea un stub para roomService.findAvailableRoomId
      * que cuando se pase la bookingRequest2 devuelva el roomId
      * 101.
@@ -91,6 +110,17 @@ public class BookingServiceTest {
      */
     @Test
     void makeBookingTest1() {
+when(roomService.findAvailableRoomId(bookingRequest2)).thenReturn("101");
+        if(bookingRequest2.isPrepaid()) {
+            bookingRequestCaptor = ArgumentCaptor.forClass(BookingRequest.class);
+
+            priceCaptor = ArgumentCaptor.forClass(Double.class);
+
+            bookingService.makeBooking(bookingRequest2);
+
+            verify(paymentService).pay(bookingRequestCaptor.capture(), priceCaptor.capture());
+        }
+
 
     }
 
@@ -108,5 +138,14 @@ public class BookingServiceTest {
     @Test
     void makeBookingTest2() {
 
+        when(roomService.findAvailableRoomId(bookingRequest2)).thenReturn("101");
+        bookingService.makeBooking(bookingRequest2);
+        roomIdCaptor = ArgumentCaptor.forClass(String.class);
+        bookingIdCaptor = ArgumentCaptor.forClass(String.class);
+        verify(roomService).bookRoom(roomIdCaptor.capture());
+        verify(mailSender).sendBookingConfirmation(bookingIdCaptor.capture());
+        InOrder inOrder = inOrder(roomService, mailSender);
+        inOrder.verify(roomService).bookRoom(roomIdCaptor.capture());
+        inOrder.verify(mailSender).sendBookingConfirmation(bookingIdCaptor.capture());
     }
 }

@@ -3,8 +3,12 @@ package org.iesvdm.booking;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
+import static org.assertj.core.api.Assertions.*;
 
 public class BookingDAOTest {
 
@@ -26,6 +30,23 @@ public class BookingDAOTest {
      */
     @Test
     void  getAllBookingRequestsTest() {
+        BookingRequest bookingRequest1 = new BookingRequest("1"
+                , LocalDate.of(2024,6, 10)
+                , LocalDate.of(2024, 6, 16)
+                ,4
+                ,false
+        );
+        BookingRequest bookingRequest2 = new BookingRequest("2"
+                , LocalDate.of(2024,8, 3)
+                , LocalDate.of(2024, 9, 9)
+                ,3
+                ,true
+        );
+        bookingDAO.save(bookingRequest1);
+        bookingDAO.save(bookingRequest2);
+
+        bookingDAO.getAllBookingRequests();
+        assertThat(bookingDAO.getAllBookingRequests()).contains(bookingRequest1, bookingRequest2);
 
     }
 
@@ -37,7 +58,20 @@ public class BookingDAOTest {
      */
     @Test
     void getAllUUIDsTest() {
-
+        BookingRequest bookingRequest1 = new BookingRequest("1"
+                , LocalDate.of(2024,6, 10)
+                , LocalDate.of(2024, 6, 16)
+                ,4
+                ,false
+        );
+        BookingRequest bookingRequest2 = new BookingRequest("2"
+                , LocalDate.of(2024,8, 3)
+                , LocalDate.of(2024, 9, 9)
+                ,3
+                ,true
+        );
+        bookingDAO.save(bookingRequest1);
+        bookingDAO.save(bookingRequest2);
     }
 
 
@@ -49,7 +83,27 @@ public class BookingDAOTest {
      */
     @Test
     void getTest() {
+        BookingRequest bookingRequest1 = new BookingRequest("1"
+                , LocalDate.of(2024,6, 10)
+                , LocalDate.of(2024, 6, 16)
+                ,4
+                ,false
+        );
+        BookingRequest bookingRequest2 = new BookingRequest("2"
+                , LocalDate.of(2024,8, 3)
+                , LocalDate.of(2024, 9, 9)
+                ,3
+                ,true
+        );
+        bookingDAO.save(bookingRequest1);
+        bookingDAO.save(bookingRequest2);
 
+
+
+        bookingDAO.get("1");
+        bookingDAO.get("2");
+        assertThat(bookingDAO.get("1")).toString().contains(bookingRequest1.toString());
+        assertThat(bookingDAO.get("2")).toString().contains(bookingRequest2.toString());
     }
 
     /**
@@ -60,7 +114,24 @@ public class BookingDAOTest {
      */
     @Test
     void deleteTest() {
+        BookingRequest bookingRequest1 = new BookingRequest("1"
+                , LocalDate.of(2024,6, 10)
+                , LocalDate.of(2024, 6, 16)
+                ,4
+                ,false
+        );
+        BookingRequest bookingRequest2 = new BookingRequest("2"
+                , LocalDate.of(2024,8, 3)
+                , LocalDate.of(2024, 9, 9)
+                ,3
+                ,true
+        );
+        bookingDAO.save(bookingRequest1);
+        bookingDAO.save(bookingRequest2);
 
+        bookingDAO.delete("1");
+        bookingDAO.totalBookings();
+        assertThat(bookingDAO.getAllBookingRequests()).contains(bookingRequest2);
     }
 
     /**
@@ -71,7 +142,23 @@ public class BookingDAOTest {
      */
     @Test
     void saveTwiceSameBookingRequestTest() {
+        BookingRequest bookingRequest1 = new BookingRequest("1"
+                , LocalDate.of(2024,6, 10)
+                , LocalDate.of(2024, 6, 16)
+                ,4
+                ,false
+        );
+        BookingRequest bookingRequest2 = new BookingRequest("2"
+                , LocalDate.of(2024,8, 3)
+                , LocalDate.of(2024, 9, 9)
+                ,3
+                ,true
+        );
 
+        bookingDAO.save(bookingRequest1);
+        bookingDAO.save(bookingRequest1);
+
+        assertThat(bookingDAO.getAllUUIDs()).hasSize(2);
     }
 
 }
