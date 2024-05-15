@@ -58,6 +58,7 @@ public class BookingServiceTest {
 
     }
 
+
     /**
      * Crea un stub para roomService.getAvailableRoom
      * que devuelva una lista de 3 habitaciones disponibles

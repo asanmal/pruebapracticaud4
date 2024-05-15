@@ -28,6 +28,7 @@ public class BookingDAOTest {
      * Comprueba que cuando invocas bookingDAO.getAllBookingRequest
      * obtienes las 2 peticiones.
      */
+
     @Test
     void  getAllBookingRequestsTest() {
         BookingRequest bookingRequest1 = new BookingRequest("1"
